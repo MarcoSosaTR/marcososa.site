@@ -1,3 +1,11 @@
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
+import tsx from 'react-syntax-highlighter/dist/esm/languages/prism/tsx'
+import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typescript'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
+SyntaxHighlighter.registerLanguage('tsx', tsx)
+SyntaxHighlighter.registerLanguage('typescript', typescript)
+
 type CodeExampleProps = {
   label: string
   code?: string
@@ -23,9 +31,21 @@ export function CodeExample({
       </figcaption>
 
       {hasCode ? (
-        <pre className="min-h-48 overflow-x-auto p-4 text-sm leading-6">
-          <code>{code}</code>
-        </pre>
+        <SyntaxHighlighter
+          customStyle={{
+            background: '#09090b',
+            margin: 0,
+            minHeight: '12rem',
+            padding: '1rem',
+            fontSize: '0.675rem',
+          }}
+          language={language}
+          showLineNumbers
+          style={oneDark}
+          wrapLongLines
+        >
+          {code ?? ''}
+        </SyntaxHighlighter>
       ) : (
         <div className="flex min-h-48 items-center justify-center border border-dashed border-zinc-700 m-4 rounded-md px-5 py-8 text-center text-sm leading-6 text-zinc-400">
           {emptyMessage}

@@ -1,5 +1,159 @@
 import profilePhotoUrl from '../assets/marcososa-image.png'
 
+const todoUseEffectBeforeCode = `import { useEffect, useState } from 'react'
+
+type Todo = {
+  userId: number
+  id: number
+  title: string
+  completed: boolean
+}
+
+type CompletedState = Record<number, boolean>
+
+const TODOS_URL = 'https://jsonplaceholder.typicode.com/todos'
+
+export function TodoList() {
+  const [completed, setCompleted] = useState<CompletedState>({})
+  const [data, setData] = useState<Todo[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    const fetchTodos = async () => {
+      try {
+        setError(null)
+        setIsLoading(true)
+
+        const response = await fetch(TODOS_URL, {
+          signal: controller.signal,
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch todos')
+        }
+
+        const todos = (await response.json()) as Todo[]
+
+        setData(todos)
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          setError('Failed to load todos.')
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    fetchTodos()
+
+    return () => controller.abort()
+  }, [])
+
+  const toggleTodo = (id: number) => {
+    setCompleted((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
+
+  return (
+    <ul>
+      {data.map((todo) => {
+        const todoId = 'todo-' + todo.id
+
+        return (
+          <li key={todo.id}>
+            <input
+              checked={completed[todo.id] || false}
+              id={todoId}
+              onChange={() => toggleTodo(todo.id)}
+              type="checkbox"
+            />
+            <label htmlFor={todoId}>{todo.title}</label>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}`
+
+const todoTanStackQueryAfterCode = `import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+
+type Todo = {
+  userId: number
+  id: number
+  title: string
+  completed: boolean
+}
+
+type CompletedState = Record<number, boolean>
+
+const TODOS_URL = 'https://jsonplaceholder.typicode.com/todos'
+
+async function fetchTodos({ signal }: { signal?: AbortSignal }): Promise<Todo[]> {
+  const response = await fetch(TODOS_URL, { signal })
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch todos')
+  }
+
+  return response.json()
+}
+
+export function TodoList() {
+  const [completed, setCompleted] = useState<CompletedState>({})
+
+  const {
+    data = [],
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  })
+
+  const toggleTodo = (id: number) => {
+    setCompleted((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }
+
+  if (isLoading) {
+    return <p>Loading todos...</p>
+  }
+
+  if (error) {
+    return <p>Failed to load todos.</p>
+  }
+
+  return (
+    <ul>
+      {data.map((todo) => {
+        const todoId = 'todo-' + todo.id
+
+        return (
+          <li key={todo.id}>
+            <input
+              checked={completed[todo.id] ?? todo.completed}
+              id={todoId}
+              onChange={() => toggleTodo(todo.id)}
+              type="checkbox"
+            />
+            <label htmlFor={todoId}>{todo.title}</label>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}`
+
 export type PortfolioStatus =
   | 'Coming Soon'
   | 'Planned'
@@ -40,10 +194,12 @@ export type TechnicalNote = {
   id: string
   title: string
   summary: string
-  status: PortfolioStatus
+  status?: PortfolioStatus
   concepts: string[]
   problem: string
   improvement: string
+  queryAdvantages?: string[]
+  cancellationNote?: string
   beforeCode: string
   afterCode: string
   explanation: string
@@ -133,8 +289,7 @@ export const technicalNotes: TechnicalNote[] = [
     id: 'todo-useeffect-to-tanstack-query',
     title: 'Todo Refactor: useEffect to TanStack Query',
     summary:
-      'A planned before/after example showing how manual data fetching with useEffect can be refactored into TanStack Query.',
-    status: 'Coming Soon',
+      'A before/after refactor note showing a previous manual useEffect fetching implementation and how it can be moved to TanStack Query.',
     concepts: [
       'useEffect',
       'TanStack Query',
@@ -143,13 +298,20 @@ export const technicalNotes: TechnicalNote[] = [
       'error handling',
     ],
     problem:
-      'The future example will start with a simple Todo list that keeps request state, fetched data, loading flags, and error handling inside one component.',
+      'The previous Todo list kept request state, fetched data, loading flags, and error handling inside one component.',
     improvement:
-      'The refactor will move server-state concerns into TanStack Query so the component can focus on rendering and interaction decisions.',
-    beforeCode: '',
-    afterCode: '',
+      'The refactored version moves server-state concerns into TanStack Query so the component can focus on rendering and interaction decisions.',
+    queryAdvantages: [
+      'Moves server-state lifecycle concerns out of the component and into a dedicated data-fetching layer.',
+      'Provides built-in loading, error, refetching, caching, stale data, and request deduplication behavior.',
+      'Makes the component easier to review because rendering logic is separated from request orchestration.',
+    ],
+    cancellationNote:
+      'Manual AbortController setup is usually not needed, but cancellation can still be supported by using the signal provided by TanStack Query.',
+    beforeCode: todoUseEffectBeforeCode,
+    afterCode: todoTanStackQueryAfterCode,
     explanation:
-      'The note is intentionally scaffolded now. The before and after snippets can be added later without changing the page structure.',
+      'The working example demonstrates the previous useEffect approach, followed by a TanStack Query version that separates server state from local UI state.',
     tradeoffs:
       'TanStack Query adds a dependency and requires clear query keys, but it can reduce custom request state and make async behavior easier to review.',
   },

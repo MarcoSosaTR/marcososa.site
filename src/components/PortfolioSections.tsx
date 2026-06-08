@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import type { ReactNode } from 'react'
 import type {
   CaseStudy,
   PortfolioStatus,
@@ -167,9 +168,18 @@ export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
   )
 }
 
-export function TechnicalNoteCard({ note }: { note: TechnicalNote }) {
+export function TechnicalNoteCard({
+  demo,
+  note,
+}: {
+  demo?: ReactNode
+  note: TechnicalNote
+}) {
   return (
-    <article className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm md:p-6">
+    <article
+      className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm md:p-6"
+      id={note.id}
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h3 className="text-2xl font-bold text-zinc-950">{note.title}</h3>
@@ -177,7 +187,7 @@ export function TechnicalNoteCard({ note }: { note: TechnicalNote }) {
             {note.summary}
           </p>
         </div>
-        <StatusBadge status={note.status} />
+        {note.status ? <StatusBadge status={note.status} /> : null}
       </div>
 
       <div className="mt-5">
@@ -207,6 +217,42 @@ export function TechnicalNoteCard({ note }: { note: TechnicalNote }) {
         <p className="mt-6 max-w-4xl text-sm leading-6 text-zinc-600">
           {note.explanation}
         </p>
+      ) : null}
+
+      {note.queryAdvantages?.length || note.cancellationNote ? (
+        <section className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-5">
+          <p className="text-sm font-semibold uppercase text-teal-700">
+            Why TanStack Query
+          </p>
+
+          {note.queryAdvantages?.length ? (
+            <ul className="mt-4 grid gap-3 md:grid-cols-3">
+              {note.queryAdvantages.map((advantage) => (
+                <li
+                  className="rounded-md border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700"
+                  key={advantage}
+                >
+                  {advantage}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {note.cancellationNote ? (
+            <p className="mt-4 rounded-md border border-sky-100 bg-sky-50 p-4 text-sm leading-6 text-sky-950">
+              {note.cancellationNote}
+            </p>
+          ) : null}
+        </section>
+      ) : null}
+
+      {demo ? (
+        <section className="mt-6">
+          <p className="text-sm font-semibold uppercase text-teal-700">
+            Working example
+          </p>
+          <div className="mt-3">{demo}</div>
+        </section>
       ) : null}
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
