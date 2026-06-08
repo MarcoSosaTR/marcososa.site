@@ -1,0 +1,138 @@
+import { Link } from 'react-router-dom'
+import {
+  caseStudies,
+  fullProjects,
+  profile,
+  technicalNotes,
+} from '../data/portfolio'
+
+const sectionLinks = [
+  {
+    to: '/projects',
+    title: 'Full Projects',
+    description:
+      'Complete applications with demo, repository, details, stack, and status support.',
+    count: fullProjects.length,
+  },
+  {
+    to: '/case-studies',
+    title: 'Case Studies',
+    description:
+      'Longer engineering explanations for architecture, refactoring, and trade-offs.',
+    count: caseStudies.length,
+  },
+  {
+    to: '/technical-notes',
+    title: 'Technical Notes',
+    description:
+      'Focused before/after examples, snippets, and small practical React decisions.',
+    count: technicalNotes.length,
+  },
+]
+
+export function HomePage() {
+  return (
+    <>
+      <section className="bg-zinc-950 text-white">
+        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:py-24 lg:grid-cols-[1fr_360px] lg:items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase text-teal-300">
+              React + TypeScript portfolio
+            </p>
+            <h1 className="mt-4 max-w-4xl text-5xl font-bold leading-[1.05] md:text-6xl">
+              {profile.name}
+            </h1>
+            <p className="mt-5 text-xl font-semibold text-zinc-100">
+              {profile.role}
+            </p>
+            <p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-300">
+              {profile.focus}
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-teal-300 px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-teal-200"
+                to="/projects"
+              >
+                View projects
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                to="/technical-notes"
+              >
+                Review technical notes
+              </Link>
+            </div>
+          </div>
+
+          <aside className="rounded-lg border border-white/10 bg-white/[0.04] p-5 shadow-sm">
+            <div className="overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
+              {profile.photoUrl ? (
+                <img
+                  alt={`${profile.name} profile`}
+                  className="max-h-[560px] w-full object-contain"
+                  src={profile.photoUrl}
+                />
+              ) : (
+                <div className="flex aspect-square w-full items-center justify-center bg-zinc-900 text-6xl font-bold text-teal-200">
+                  {profile.initials}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-md border border-white/10 bg-zinc-900 p-4">
+                <p className="text-zinc-400">Server state</p>
+                <p className="mt-2 font-semibold text-teal-300">
+                  TanStack Query
+                </p>
+              </div>
+              <div className="rounded-md border border-white/10 bg-zinc-900 p-4">
+                <p className="text-zinc-400">UI state</p>
+                <p className="mt-2 font-semibold text-amber-300">
+                  explicit flows
+                </p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-14">
+        <div className="mb-8 max-w-3xl">
+          <p className="text-sm font-semibold uppercase text-teal-700">
+            Portfolio routes
+          </p>
+          <h2 className="mt-2 text-3xl font-bold text-zinc-950 md:text-4xl">
+            Choose the area you want to review.
+          </h2>
+          <p className="mt-3 text-base leading-7 text-zinc-600">
+            The main sections now live on separate routes so each category can
+            grow into its own portfolio surface without making the homepage
+            heavy.
+          </p>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          {sectionLinks.map((section) => (
+            <Link
+              className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md"
+              key={section.to}
+              to={section.to}
+            >
+              <p className="text-sm font-semibold text-teal-700">
+                {section.count} prepared
+              </p>
+              <h3 className="mt-3 text-xl font-bold text-zinc-950">
+                {section.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-zinc-600">
+                {section.description}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </>
+  )
+}
