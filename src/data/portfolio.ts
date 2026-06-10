@@ -208,6 +208,15 @@ export type TechnicalNote = {
 
 export const fullProjects: Project[] = [
   {
+    id: 'flash-wash',
+    title: 'Flash-Wash: Agenda un lavado de auto directo a tu domicilio',
+    description: 'A bilingual React and TypeScript booking app for scheduling at-home car wash appointments, managing service packages, and controlling availability through a mocked admin interface.',
+    techStack: ['React', 'TypeScript', 'Vite', 'Jest', 'Testing Library', 'Mock API'],
+    status: 'Completed',
+    liveDemoUrl: 'https://flashwash.marcososa.site/',
+    githubUrl: 'https://github.com/MarcoSosaTR/flashwash',
+  },
+  {
     id: 'pokemon-react-architecture-lab',
     title: 'Pokemon React Architecture Lab',
     description:
