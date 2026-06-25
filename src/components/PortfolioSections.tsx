@@ -33,7 +33,7 @@ export function SectionHeader({ eyebrow, title, description }: SectionHeaderProp
   )
 }
 
-function StatusBadge({ status }: { status: PortfolioStatus }) {
+export function StatusBadge({ status }: { status: PortfolioStatus }) {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusStyles[status]}`}
@@ -43,7 +43,7 @@ function StatusBadge({ status }: { status: PortfolioStatus }) {
   )
 }
 
-function TagList({ tags }: { tags: string[] }) {
+export function TagList({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {tags.map((tag) => (
@@ -58,7 +58,7 @@ function TagList({ tags }: { tags: string[] }) {
   )
 }
 
-function LinkButton({
+export function LinkButton({
   href,
   children,
   variant = 'secondary',
@@ -143,6 +143,12 @@ export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
         <StatusBadge status={caseStudy.status} />
       </div>
 
+      {caseStudy.summary ? (
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-zinc-600">
+          {caseStudy.summary}
+        </p>
+      ) : null}
+
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div className="rounded-lg border border-rose-100 bg-rose-50 p-4">
           <p className="text-sm font-semibold text-rose-800">Problem</p>
@@ -160,9 +166,14 @@ export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
 
       <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <TagList tags={caseStudy.technologies} />
-        <LinkButton href={caseStudy.readMoreUrl} variant="primary">
-          Read more
-        </LinkButton>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          {caseStudy.liveDemoUrl ? (
+            <LinkButton href={caseStudy.liveDemoUrl}>Live demo</LinkButton>
+          ) : null}
+          <LinkButton href={caseStudy.readMoreUrl} variant="primary">
+            Read more
+          </LinkButton>
+        </div>
       </div>
     </article>
   )

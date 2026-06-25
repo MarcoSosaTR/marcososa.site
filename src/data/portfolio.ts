@@ -183,11 +183,33 @@ export type Project = {
 export type CaseStudy = {
   id: string
   title: string
+  summary?: string
   problem: string
   improvement: string
   technologies: string[]
   readMoreUrl?: string
+  liveDemoUrl?: string
   status: PortfolioStatus
+  details?: {
+    introduction: string[]
+    architecture?: {
+      app: string
+      role: string
+      port: string
+      responsibility: string
+    }[]
+    sections: {
+      title: string
+      body: string[]
+      bullets?: string[]
+      codeExamples?: {
+        label: string
+        language?: string
+        code: string
+      }[]
+    }[]
+    takeaways: string[]
+  }
 }
 
 export type TechnicalNote = {
@@ -251,6 +273,175 @@ export const fullProjects: Project[] = [
 ]
 
 export const caseStudies: CaseStudy[] = [
+  {
+    id: 'microfrontends-module-federation',
+    title: 'Microfrontend Gallery with Webpack Module Federation',
+    summary:
+      'A two-application React demo where a host gallery loads a remote header at runtime through Webpack Module Federation.',
+    problem:
+      'A shared header and gallery page need to be owned, built, and deployed as separate frontend apps without coupling the host to the remote source code.',
+    improvement:
+      'Split the UI into a remote header app and a host home app, using a runtime remote contract, Suspense loading, shared React singletons, and Cloudflare-ready deployment configuration.',
+    technologies: [
+      'React',
+      'Webpack Module Federation',
+      'React.lazy',
+      'Suspense',
+      'Cloudflare',
+    ],
+    status: 'Completed',
+    readMoreUrl: '/case-studies/microfrontends-module-federation',
+    liveDemoUrl: 'https://microfrontends.marcososa.site',
+    details: {
+      introduction: [
+        'This case study demonstrates a small microfrontend architecture using React and Webpack Module Federation.',
+        'The solution is split into two independently built applications: a remote app that owns and exposes a shared header component, and a host app that renders the gallery page while consuming that header at runtime.',
+      ],
+      architecture: [
+        {
+          app: 'header-app',
+          role: 'Remote',
+          port: '3000',
+          responsibility: 'Exposes the Header component',
+        },
+        {
+          app: 'home-app',
+          role: 'Host',
+          port: '3001',
+          responsibility: 'Renders the gallery page and loads the remote header',
+        },
+      ],
+      sections: [
+        {
+          title: 'Remote ownership',
+          body: [
+            'The remote application owns the header UI and publishes it through the ModuleFederationPlugin configuration.',
+            'The host does not import the header from local source code. Instead, it consumes the generated remoteEntry.js file exposed by the remote application.',
+          ],
+          bullets: [
+            "name: 'headerApp' defines the remote container name.",
+            "filename: 'remoteEntry.js' creates the manifest file used by consumers.",
+            "exposes makes Header.jsx available outside of header-app as './Header'.",
+            "publicPath: 'auto' lets Webpack resolve remote chunks from the same deployed location as remoteEntry.js.",
+          ],
+          codeExamples: [
+            {
+              label: 'header-app federation config',
+              language: 'javascript',
+              code: `new ModuleFederationPlugin({
+  name: 'headerApp',
+  filename: 'remoteEntry.js',
+  exposes: {
+    './Header': './src/Header.jsx',
+  },
+})`,
+            },
+          ],
+        },
+        {
+          title: 'Host integration',
+          body: [
+            'The host application owns the gallery page and declares where the remote header container can be loaded from.',
+            'For local development, the host can load the remote from localhost. In production, the same build-time variable can point at the deployed Cloudflare location.',
+          ],
+          bullets: [
+            'remotes tells the host where to find headerApp.',
+            'The remote URL is resolved at build time from the environment.',
+            'Consumers import the exposed component through the runtime contract headerApp/Header.',
+          ],
+          codeExamples: [
+            {
+              label: 'home-app federation config',
+              language: 'javascript',
+              code: `const headerAppRemoteUrl =
+  process.env.VITE_HEADER_REMOTE_URL ||
+  'http://localhost:3000/remoteEntry.js'
+
+new ModuleFederationPlugin({
+  name: 'homeApp',
+  remotes: {
+    headerApp: \`headerApp@\${headerAppRemoteUrl}\`,
+  },
+})`,
+            },
+          ],
+        },
+        {
+          title: 'Runtime loading',
+          body: [
+            'The host loads the remote component asynchronously with React.lazy and renders it inside Suspense.',
+            'That keeps the header code out of the host bundle and gives the host a clear loading state while the browser downloads and initializes the remote module.',
+          ],
+          codeExamples: [
+            {
+              label: 'Lazy remote component',
+              language: 'jsx',
+              code: `import { lazy, Suspense } from 'react'
+
+const Header = lazy(() => import('headerApp/Header'))
+
+export function HomePage() {
+  return (
+    <Suspense fallback={<p className="loading">Loading remote header...</p>}>
+      <Header />
+    </Suspense>
+  )
+}`,
+            },
+          ],
+        },
+        {
+          title: 'Shared React dependencies',
+          body: [
+            'Both applications coordinate React and React DOM through Module Federation shared dependencies.',
+            'Marking React as a singleton helps avoid duplicate React instances, which can cause rendering and hook-related problems when independently built applications are composed at runtime.',
+          ],
+          codeExamples: [
+            {
+              label: 'Shared dependencies',
+              language: 'javascript',
+              code: `shared: {
+  react: {
+    singleton: true,
+    requiredVersion: dependencies.react,
+  },
+  'react-dom': {
+    singleton: true,
+    requiredVersion: dependencies['react-dom'],
+  },
+}`,
+            },
+          ],
+        },
+        {
+          title: 'Cloudflare deployment notes',
+          body: [
+            'For deployment, the host can receive a public remote URL through VITE_HEADER_REMOTE_URL.',
+            'The remote application also includes a Cloudflare _headers file so the host can load remoteEntry.js from a different deployed location.',
+          ],
+          codeExamples: [
+            {
+              label: 'Host remote URL',
+              language: 'bash',
+              code: `VITE_HEADER_REMOTE_URL=https://your-domain.com/path-to-header-app/remoteEntry.js`,
+            },
+            {
+              label: 'Remote _headers file',
+              language: 'bash',
+              code: `/*
+  Access-Control-Allow-Origin: *`,
+            },
+          ],
+        },
+      ],
+      takeaways: [
+        'Each frontend has its own build and development server.',
+        'The header can be developed and deployed independently from the host gallery.',
+        'The host consumes the header through a runtime contract instead of direct source imports.',
+        'Shared dependency configuration keeps React aligned across both applications.',
+      ],
+    },
+  },
   {
     id: 'separating-server-state-from-ui-state',
     title: 'Separating Server State from UI State',
