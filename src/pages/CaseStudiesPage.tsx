@@ -1,9 +1,10 @@
 import { CaseStudyCard, SectionHeader } from '../components/PortfolioSections'
+import { portfolioPageTheme, ThemedPage } from '../components/ThemedPage'
 import { caseStudies } from '../data/portfolio'
 
 export function CaseStudiesPage() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-14">
+    <ThemedPage theme={portfolioPageTheme}>
       <SectionHeader
         eyebrow="Case Studies"
         title="Engineering writeups for architecture, trade-offs, and refactors."
@@ -14,6 +15,6 @@ export function CaseStudiesPage() {
           <CaseStudyCard key={caseStudy.id} caseStudy={caseStudy} />
         ))}
       </div>
-    </section>
+    </ThemedPage>
   )
 }

@@ -1,9 +1,10 @@
 import { ProjectCard, SectionHeader } from '../components/PortfolioSections'
+import { portfolioPageTheme, ThemedPage } from '../components/ThemedPage'
 import { fullProjects } from '../data/portfolio'
 
 export function ProjectsPage() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-14">
+    <ThemedPage theme={portfolioPageTheme}>
       <SectionHeader
         eyebrow="Full Projects"
         title="Complete applications with clear scope and technical decisions."
@@ -14,6 +15,6 @@ export function ProjectsPage() {
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>
-    </section>
+    </ThemedPage>
   )
 }

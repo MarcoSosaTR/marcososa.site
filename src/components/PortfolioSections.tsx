@@ -15,20 +15,28 @@ type SectionHeaderProps = {
 }
 
 const statusStyles: Record<PortfolioStatus, string> = {
-  'Coming Soon': 'border-sky-200 bg-sky-50 text-sky-700',
-  Completed: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  'In Progress': 'border-amber-200 bg-amber-50 text-amber-700',
-  Planned: 'border-zinc-200 bg-zinc-100 text-zinc-700',
+  'Coming Soon':
+    'border-sky-200 bg-sky-50 text-sky-700 dark:border-primary/40 dark:bg-primary/15 dark:text-foreground',
+  Completed:
+    'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-accent/40 dark:bg-accent/15 dark:text-accent',
+  'In Progress':
+    'border-amber-200 bg-amber-50 text-amber-700 dark:border-accent/40 dark:bg-accent/15 dark:text-accent',
+  Planned:
+    'border-zinc-200 bg-zinc-100 text-zinc-700 dark:border-muted/30 dark:bg-background/70 dark:text-muted',
 }
 
 export function SectionHeader({ eyebrow, title, description }: SectionHeaderProps) {
   return (
     <div className="mb-8 max-w-3xl">
-      <p className="text-sm font-semibold uppercase text-teal-700">{eyebrow}</p>
-      <h2 className="mt-2 text-3xl font-bold text-zinc-950 md:text-4xl">
+      <p className="text-sm font-semibold uppercase text-teal-700 dark:text-accent">
+        {eyebrow}
+      </p>
+      <h2 className="mt-2 text-3xl font-bold text-zinc-950 dark:text-foreground md:text-4xl">
         {title}
       </h2>
-      <p className="mt-3 text-base leading-7 text-zinc-600">{description}</p>
+      <p className="mt-3 text-base leading-7 text-zinc-600 dark:text-muted">
+        {description}
+      </p>
     </div>
   )
 }
@@ -49,7 +57,7 @@ export function TagList({ tags }: { tags: string[] }) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700"
+          className="rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 dark:border-muted/20 dark:bg-background/70 dark:text-muted"
         >
           {tag}
         </span>
@@ -71,10 +79,10 @@ export function LinkButton({
     'inline-flex min-h-10 items-center justify-center rounded-md px-3.5 py-2 text-sm font-semibold transition'
   const variantClasses =
     variant === 'primary'
-      ? 'bg-zinc-950 text-white hover:bg-zinc-800'
-      : 'border border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50'
+      ? 'bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-accent dark:text-background dark:hover:bg-accent/90'
+      : 'border border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-muted/30 dark:bg-surface dark:text-foreground dark:hover:bg-background'
   const disabledClasses =
-    'cursor-not-allowed border border-zinc-200 bg-zinc-100 text-zinc-400'
+    'cursor-not-allowed border border-zinc-200 bg-zinc-100 text-zinc-400 dark:border-muted/20 dark:bg-background/60 dark:text-muted'
 
   if (!href) {
     return (
@@ -108,13 +116,15 @@ export function LinkButton({
 
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="flex h-full flex-col rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+    <article className="flex h-full flex-col rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-muted/20 dark:bg-surface dark:text-foreground dark:shadow-none">
       <div className="flex items-start justify-between gap-4">
-        <h3 className="text-xl font-bold text-zinc-950">{project.title}</h3>
+        <h3 className="text-xl font-bold text-zinc-950 dark:text-foreground">
+          {project.title}
+        </h3>
         <StatusBadge status={project.status} />
       </div>
 
-      <p className="mt-4 flex-1 text-sm leading-6 text-zinc-600">
+      <p className="mt-4 flex-1 text-sm leading-6 text-zinc-600 dark:text-muted">
         {project.description}
       </p>
 
@@ -135,30 +145,34 @@ export function ProjectCard({ project }: { project: Project }) {
 
 export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
   return (
-    <article className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+    <article className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-muted/20 dark:bg-surface dark:text-foreground dark:shadow-none">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="max-w-xl text-xl font-bold text-zinc-950">
+        <h3 className="max-w-xl text-xl font-bold text-zinc-950 dark:text-foreground">
           {caseStudy.title}
         </h3>
         <StatusBadge status={caseStudy.status} />
       </div>
 
       {caseStudy.summary ? (
-        <p className="mt-4 max-w-3xl text-sm leading-6 text-zinc-600">
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-muted">
           {caseStudy.summary}
         </p>
       ) : null}
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">
-        <div className="rounded-lg border border-rose-100 bg-rose-50 p-4">
-          <p className="text-sm font-semibold text-rose-800">Problem</p>
-          <p className="mt-2 text-sm leading-6 text-rose-950">
+        <div className="rounded-lg border border-rose-100 bg-rose-50 p-4 dark:border-accent/30 dark:bg-background/70">
+          <p className="text-sm font-semibold text-rose-800 dark:text-accent">
+            Problem
+          </p>
+          <p className="mt-2 text-sm leading-6 text-rose-950 dark:text-foreground">
             {caseStudy.problem}
           </p>
         </div>
-        <div className="rounded-lg border border-teal-100 bg-teal-50 p-4">
-          <p className="text-sm font-semibold text-teal-800">Improvement</p>
-          <p className="mt-2 text-sm leading-6 text-teal-950">
+        <div className="rounded-lg border border-teal-100 bg-teal-50 p-4 dark:border-primary/40 dark:bg-primary/15">
+          <p className="text-sm font-semibold text-teal-800 dark:text-accent">
+            Improvement
+          </p>
+          <p className="mt-2 text-sm leading-6 text-teal-950 dark:text-foreground">
             {caseStudy.improvement}
           </p>
         </div>
@@ -188,13 +202,15 @@ export function TechnicalNoteCard({
 }) {
   return (
     <article
-      className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm md:p-6"
+      className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-muted/20 dark:bg-surface dark:text-foreground dark:shadow-none md:p-6"
       id={note.id}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-bold text-zinc-950">{note.title}</h3>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-600">
+          <h3 className="text-2xl font-bold text-zinc-950 dark:text-foreground">
+            {note.title}
+          </h3>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-muted">
             {note.summary}
           </p>
         </div>
@@ -206,33 +222,41 @@ export function TechnicalNoteCard({
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-lg border border-rose-100 bg-rose-50 p-4">
-          <p className="text-sm font-semibold text-rose-800">Problem</p>
-          <p className="mt-2 text-sm leading-6 text-rose-950">{note.problem}</p>
+        <div className="rounded-lg border border-rose-100 bg-rose-50 p-4 dark:border-accent/30 dark:bg-background/70">
+          <p className="text-sm font-semibold text-rose-800 dark:text-accent">
+            Problem
+          </p>
+          <p className="mt-2 text-sm leading-6 text-rose-950 dark:text-foreground">
+            {note.problem}
+          </p>
         </div>
-        <div className="rounded-lg border border-teal-100 bg-teal-50 p-4">
-          <p className="text-sm font-semibold text-teal-800">Improvement</p>
-          <p className="mt-2 text-sm leading-6 text-teal-950">
+        <div className="rounded-lg border border-teal-100 bg-teal-50 p-4 dark:border-primary/40 dark:bg-primary/15">
+          <p className="text-sm font-semibold text-teal-800 dark:text-accent">
+            Improvement
+          </p>
+          <p className="mt-2 text-sm leading-6 text-teal-950 dark:text-foreground">
             {note.improvement}
           </p>
         </div>
-        <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-4">
-          <p className="text-sm font-semibold text-indigo-800">Trade-off</p>
-          <p className="mt-2 text-sm leading-6 text-indigo-950">
+        <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-4 dark:border-muted/20 dark:bg-background/70">
+          <p className="text-sm font-semibold text-indigo-800 dark:text-muted">
+            Trade-off
+          </p>
+          <p className="mt-2 text-sm leading-6 text-indigo-950 dark:text-foreground">
             {note.tradeoffs}
           </p>
         </div>
       </div>
 
       {note.explanation ? (
-        <p className="mt-6 max-w-4xl text-sm leading-6 text-zinc-600">
+        <p className="mt-6 max-w-4xl text-sm leading-6 text-zinc-600 dark:text-muted">
           {note.explanation}
         </p>
       ) : null}
 
       {note.queryAdvantages?.length || note.cancellationNote ? (
-        <section className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-5">
-          <p className="text-sm font-semibold uppercase text-teal-700">
+        <section className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-5 dark:border-muted/20 dark:bg-background/60">
+          <p className="text-sm font-semibold uppercase text-teal-700 dark:text-accent">
             Why TanStack Query
           </p>
 
@@ -240,7 +264,7 @@ export function TechnicalNoteCard({
             <ul className="mt-4 grid gap-3 md:grid-cols-3">
               {note.queryAdvantages.map((advantage) => (
                 <li
-                  className="rounded-md border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700"
+                  className="rounded-md border border-zinc-200 bg-white p-4 text-sm leading-6 text-zinc-700 dark:border-muted/20 dark:bg-surface dark:text-muted"
                   key={advantage}
                 >
                   {advantage}
@@ -250,7 +274,7 @@ export function TechnicalNoteCard({
           ) : null}
 
           {note.cancellationNote ? (
-            <p className="mt-4 rounded-md border border-sky-100 bg-sky-50 p-4 text-sm leading-6 text-sky-950">
+            <p className="mt-4 rounded-md border border-sky-100 bg-sky-50 p-4 text-sm leading-6 text-sky-950 dark:border-primary/30 dark:bg-primary/15 dark:text-foreground">
               {note.cancellationNote}
             </p>
           ) : null}
@@ -259,7 +283,7 @@ export function TechnicalNoteCard({
 
       {demo ? (
         <section className="mt-6">
-          <p className="text-sm font-semibold uppercase text-teal-700">
+          <p className="text-sm font-semibold uppercase text-teal-700 dark:text-accent">
             Working example
           </p>
           <div className="mt-3">{demo}</div>

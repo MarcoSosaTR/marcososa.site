@@ -154,6 +154,533 @@ export function TodoList() {
   )
 }`
 
+const manualFormBeforeCode = `import { useState } from 'react'
+
+type FormValues = {
+  fullName: string
+  email: string
+  message: string
+}
+
+export function ProjectInquiryForm() {
+  const [values, setValues] = useState<FormValues>({
+    fullName: '',
+    email: '',
+    message: '',
+  })
+  const [errors, setErrors] = useState<Partial<FormValues>>({})
+
+  const updateField =
+    (field: keyof FormValues) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setValues((prev) => ({
+        ...prev,
+        [field]: event.target.value,
+      }))
+    }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const nextErrors: Partial<FormValues> = {}
+
+    if (!values.fullName) {
+      nextErrors.fullName = 'Full name is required.'
+    }
+
+    if (!/\\S+@\\S+\\.\\S+/.test(values.email)) {
+      nextErrors.email = 'Use a valid email address.'
+    }
+
+    if (values.message.length < 20) {
+      nextErrors.message = 'Use at least 20 characters.'
+    }
+
+    setErrors(nextErrors)
+
+    if (Object.keys(nextErrors).length === 0) {
+      console.log(values)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input value={values.fullName} onChange={updateField('fullName')} />
+      {errors.fullName ? <p>{errors.fullName}</p> : null}
+
+      <input value={values.email} onChange={updateField('email')} />
+      {errors.email ? <p>{errors.email}</p> : null}
+
+      <textarea value={values.message} onChange={updateField('message')} />
+      {errors.message ? <p>{errors.message}</p> : null}
+
+      <button type="submit">Submit inquiry</button>
+    </form>
+  )
+}`
+
+const reactHookFormAfterCode = `import { zodResolver } from '@hookform/resolvers/zod'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+const projectTypes = [
+  'frontend-refactor',
+  'react-architecture',
+  'typescript-review',
+  'ui-implementation',
+] as const
+
+const ProjectInquirySchema = z.object({
+  fullName: z.string().trim().min(1, 'Full name is required'),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Email is required')
+    .email('Use a valid email address'),
+  role: z.string().trim().min(1, 'Role is required'),
+  projectType: z.enum(projectTypes),
+  message: z
+    .string()
+    .trim()
+    .min(1, 'Message is required')
+    .min(20, 'Use at least 20 characters'),
+  wantsFollowUp: z.boolean(),
+})
+
+type FormValues = z.infer<typeof ProjectInquirySchema>
+
+const defaultValues: FormValues = {
+  fullName: '',
+  email: '',
+  role: '',
+  projectType: 'frontend-refactor',
+  message: '',
+  wantsFollowUp: true,
+}
+
+export function ProjectInquiryForm() {
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+  } = useForm<FormValues>({
+    defaultValues,
+    mode: 'onBlur',
+    resolver: zodResolver(ProjectInquirySchema),
+  })
+
+  const onSubmit: SubmitHandler<FormValues> = (values) => {
+    console.log(values)
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('fullName')} />
+      {errors.fullName ? <p>{errors.fullName.message}</p> : null}
+
+      <input type="email" {...register('email')} />
+      {errors.email ? <p>{errors.email.message}</p> : null}
+
+      <input {...register('role')} />
+      {errors.role ? <p>{errors.role.message}</p> : null}
+
+      <select {...register('projectType')}>
+        <option value="frontend-refactor">Frontend refactor</option>
+        <option value="react-architecture">React architecture</option>
+        <option value="typescript-review">TypeScript review</option>
+        <option value="ui-implementation">UI implementation</option>
+      </select>
+
+      <textarea {...register('message')} />
+      {errors.message ? <p>{errors.message.message}</p> : null}
+
+      <label>
+        <input type="checkbox" {...register('wantsFollowUp')} />
+        Send a follow-up with availability and next steps.
+      </label>
+
+      <button type="submit">Submit inquiry</button>
+    </form>
+  )
+}`
+
+const staticEnterpriseBriefBeforeCode = `import { useState, type FormEvent } from 'react'
+
+type EnterpriseProjectFormValues = {
+  companyName: string
+  contactName: string
+  contactEmail: string
+  teamSize: string
+  projectName: string
+  projectStage: string
+  budgetRange: string
+  targetLaunch: string
+  currentStack: string
+  requiredIntegrations: string
+  accessibilityRequired: boolean
+  performanceReview: boolean
+  notes: string
+}
+
+export function EnterpriseProjectBrief() {
+  const [submittedValues, setSubmittedValues] =
+    useState<EnterpriseProjectFormValues | null>(null)
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+
+    setSubmittedValues({
+      companyName: String(formData.get('companyName') ?? ''),
+      contactName: String(formData.get('contactName') ?? ''),
+      contactEmail: String(formData.get('contactEmail') ?? ''),
+      teamSize: String(formData.get('teamSize') ?? ''),
+      projectName: String(formData.get('projectName') ?? ''),
+      projectStage: String(formData.get('projectStage') ?? ''),
+      budgetRange: String(formData.get('budgetRange') ?? ''),
+      targetLaunch: String(formData.get('targetLaunch') ?? ''),
+      currentStack: String(formData.get('currentStack') ?? ''),
+      requiredIntegrations: String(formData.get('requiredIntegrations') ?? ''),
+      accessibilityRequired: formData.get('accessibilityRequired') === 'on',
+      performanceReview: formData.get('performanceReview') === 'on',
+      notes: String(formData.get('notes') ?? ''),
+    })
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <fieldset>
+        <legend>Contact</legend>
+        <input name="companyName" />
+        <input name="contactName" />
+        <input name="contactEmail" type="email" />
+        <select name="teamSize">
+          <option value="">Select a range</option>
+          <option value="1-5">1-5</option>
+          <option value="6-20">6-20</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Project</legend>
+        <input name="projectName" />
+        <select name="projectStage">
+          <option value="discovery">Discovery</option>
+          <option value="prototype">Prototype</option>
+          <option value="active-build">Active build</option>
+          <option value="refactor">Refactor</option>
+        </select>
+        <select name="budgetRange">
+          <option value="not-specified">Not specified</option>
+          <option value="10k-25k">$10k-$25k</option>
+          <option value="25k-50k">$25k-$50k</option>
+        </select>
+        <input name="targetLaunch" type="date" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Technical scope</legend>
+        <textarea name="currentStack" />
+        <textarea name="requiredIntegrations" />
+        <label>
+          <input name="accessibilityRequired" type="checkbox" />
+          Accessibility review required
+        </label>
+        <label>
+          <input defaultChecked name="performanceReview" type="checkbox" />
+          Performance review included
+        </label>
+      </fieldset>
+
+      <textarea name="notes" />
+      <button type="submit">Save brief</button>
+
+      {submittedValues ? (
+        <pre>{JSON.stringify(submittedValues, null, 2)}</pre>
+      ) : null}
+    </form>
+  )
+}`
+
+const tanStackFormScaffoldAfterCode = `import { useState } from 'react'
+import { useForm } from '@tanstack/react-form'
+import { z } from 'zod'
+
+const ProjectBriefProjectSchema = z.object({
+  projectName: z.string().trim().min(1, 'Project name is required'),
+  projectStage: z.string(),
+  budgetRange: z.string(),
+  targetLaunch: z.string(),
+})
+
+const EnterpriseProjectSchema = z
+  .object({
+    companyName: z.string().trim().min(1, 'Company name is required'),
+    contactName: z.string().trim().min(1, 'Contact name is required'),
+    contactEmail: z.string().trim().email('Use a valid email address'),
+    teamSize: z.string(),
+    projects: z.array(ProjectBriefProjectSchema).min(1, 'Add at least one project'),
+    currentStack: z.string(),
+    requiredIntegrations: z.string(),
+    accessibilityRequired: z.boolean(),
+    accessibilityTarget: z.string(),
+    performanceReview: z.boolean(),
+    notes: z.string(),
+  })
+  .superRefine((values, context) => {
+    if (values.accessibilityRequired && !values.accessibilityTarget.trim()) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Accessibility target is required when accessibility review is required',
+        path: ['accessibilityTarget'],
+      })
+    }
+  })
+
+type EnterpriseProjectFormValues = z.infer<typeof EnterpriseProjectSchema>
+
+const createDefaultProject = () => ({
+  projectName: '',
+  projectStage: 'discovery',
+  budgetRange: 'not-specified',
+  targetLaunch: '',
+})
+
+const defaultValues: EnterpriseProjectFormValues = {
+  companyName: '',
+  contactName: '',
+  contactEmail: '',
+  teamSize: '',
+  projects: [createDefaultProject()],
+  currentStack: '',
+  requiredIntegrations: '',
+  accessibilityRequired: false,
+  accessibilityTarget: '',
+  performanceReview: true,
+  notes: '',
+}
+
+export function EnterpriseProjectBrief() {
+  const [submittedValues, setSubmittedValues] =
+    useState<EnterpriseProjectFormValues | null>(null)
+
+  const form = useForm({
+    defaultValues,
+    validators: {
+      onChange: EnterpriseProjectSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await new Promise((resolve) => setTimeout(resolve, 400))
+      setSubmittedValues(value)
+    },
+  })
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        form.handleSubmit()
+      }}
+    >
+      <form.Field
+        name="companyName"
+        children={(field) => (
+          <input
+            name={field.name}
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={(event) => field.handleChange(event.target.value)}
+          />
+        )}
+      />
+
+      <form.Field
+        name="projects"
+        mode="array"
+        children={(field) => (
+          <>
+            {field.state.value.map((_, index) => (
+              <fieldset key={index}>
+                <legend>Project {index + 1}</legend>
+
+                <form.Field
+                  name={\`projects[\${index}].projectName\` as const}
+                  children={(projectField) => (
+                    <input
+                      name={projectField.name}
+                      value={projectField.state.value}
+                      onBlur={projectField.handleBlur}
+                      onChange={(event) =>
+                        projectField.handleChange(event.target.value)
+                      }
+                    />
+                  )}
+                />
+
+                <form.Field
+                  name={\`projects[\${index}].projectStage\` as const}
+                  children={(projectField) => (
+                    <select
+                      name={projectField.name}
+                      value={projectField.state.value}
+                      onBlur={projectField.handleBlur}
+                      onChange={(event) =>
+                        projectField.handleChange(event.target.value)
+                      }
+                    >
+                      <option value="discovery">Discovery</option>
+                      <option value="prototype">Prototype</option>
+                      <option value="active-build">Active build</option>
+                      <option value="refactor">Refactor</option>
+                    </select>
+                  )}
+                />
+
+                <form.Field
+                  name={\`projects[\${index}].budgetRange\` as const}
+                  children={(projectField) => (
+                    <select
+                      name={projectField.name}
+                      value={projectField.state.value}
+                      onBlur={projectField.handleBlur}
+                      onChange={(event) =>
+                        projectField.handleChange(event.target.value)
+                      }
+                    >
+                      <option value="not-specified">Not specified</option>
+                      <option value="10k-25k">$10k-$25k</option>
+                      <option value="25k-50k">$25k-$50k</option>
+                      <option value="50k-plus">$50k+</option>
+                    </select>
+                  )}
+                />
+
+                <form.Field
+                  name={\`projects[\${index}].targetLaunch\` as const}
+                  children={(projectField) => (
+                    <input
+                      name={projectField.name}
+                      value={projectField.state.value}
+                      onBlur={projectField.handleBlur}
+                      onChange={(event) =>
+                        projectField.handleChange(event.target.value)
+                      }
+                      type="date"
+                    />
+                  )}
+                />
+
+                {field.state.value.length > 1 ? (
+                  <button
+                    onClick={() => field.removeValue(index)}
+                    type="button"
+                  >
+                    Remove project
+                  </button>
+                ) : null}
+              </fieldset>
+            ))}
+
+            <button
+              onClick={() => field.pushValue(createDefaultProject())}
+              type="button"
+            >
+              Add project
+            </button>
+          </>
+        )}
+      />
+
+      <form.Field
+        name="accessibilityRequired"
+        children={(field) => (
+          <label>
+            <input
+              checked={field.state.value}
+              name={field.name}
+              onBlur={field.handleBlur}
+              onChange={(event) => {
+                const isChecked = event.target.checked
+
+                field.handleChange(isChecked)
+
+                if (!isChecked) {
+                  form.setFieldValue('accessibilityTarget', '')
+                }
+              }}
+              type="checkbox"
+            />
+            Accessibility review required
+          </label>
+        )}
+      />
+
+      <form.Subscribe
+        selector={(state) => state.values.accessibilityRequired}
+        children={(isAccessibilityRequired) =>
+          isAccessibilityRequired ? (
+            <form.Field
+              name="accessibilityTarget"
+              children={(field) => (
+                <select
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(event) => field.handleChange(event.target.value)}
+                >
+                  <option value="">Select a target</option>
+                  <option value="wcag-2.2-aa">WCAG 2.2 AA</option>
+                  <option value="wcag-2.2-aaa">WCAG 2.2 AAA</option>
+                </select>
+              )}
+            />
+          ) : null
+        }
+      />
+
+      <form.Field
+        name="performanceReview"
+        children={(field) => (
+          <input
+            checked={field.state.value}
+            name={field.name}
+            onBlur={field.handleBlur}
+            onChange={(event) => field.handleChange(event.target.checked)}
+            type="checkbox"
+          />
+        )}
+      />
+
+      <form.Subscribe
+        selector={(state) => ({
+          canSubmit: state.canSubmit,
+          isPristine: state.isPristine,
+          isSubmitting: state.isSubmitting,
+        })}
+        children={({ canSubmit, isPristine, isSubmitting }) => (
+          <>
+            <button disabled={!canSubmit || isSubmitting} type="submit">
+              {isSubmitting ? 'Saving...' : 'Save brief'}
+            </button>
+            <button
+              disabled={isPristine || isSubmitting}
+              onClick={() => form.reset()}
+              type="button"
+            >
+              Reset
+            </button>
+          </>
+        )}
+      />
+
+      {submittedValues ? (
+        <pre>{JSON.stringify(submittedValues.projects, null, 2)}</pre>
+      ) : null}
+    </form>
+  )
+}`
+
 export type PortfolioStatus =
   | 'Coming Soon'
   | 'Planned'
@@ -514,5 +1041,60 @@ export const technicalNotes: TechnicalNote[] = [
       'The working example demonstrates the previous useEffect approach, followed by a TanStack Query version that separates server state from local UI state.',
     tradeoffs:
       'TanStack Query adds a dependency and requires clear query keys, but it can reduce custom request state and make async behavior easier to review.',
+  },
+  {
+    id: 'react-hook-form-project-inquiry',
+    title: 'React Hook Form + Zod: Project Inquiry Form',
+    summary:
+      'A focused form example showing how React Hook Form and Zod can share typed form values, schema validation, and submit handling.',
+    concepts: [
+      'React Hook Form',
+      'Zod',
+      'zodResolver',
+      'form validation',
+      'uncontrolled inputs',
+      'TypeScript',
+      'formState',
+    ],
+    problem:
+      'Manual React forms can accumulate repetitive field state, change handlers, validation checks, and error rendering logic as the number of inputs grows.',
+    improvement:
+      'React Hook Form owns registration and submit flow while Zod owns the validation contract through zodResolver, keeping runtime rules and TypeScript values aligned.',
+    beforeCode: manualFormBeforeCode,
+    afterCode: reactHookFormAfterCode,
+    explanation:
+      'The working example is a small project inquiry form with a Zod schema, a zodResolver-powered useForm setup, required fields, email validation, minimum message length, reset behavior, and a submitted-values preview.',
+    tradeoffs:
+      'React Hook Form and Zod add dependencies and resolver wiring, but they move validation out of scattered register rules and make the form contract easier to reuse.',
+  },
+  {
+    id: 'tanstack-form-enterprise-project-brief',
+    title: 'TanStack Form + Zod: Dynamic Project Brief',
+    summary:
+      'A larger multi-section form using TanStack Form, Zod validation, typed defaults, repeatable project fields, conditional inputs, and subscribed form state.',
+    status: 'In Progress',
+    concepts: [
+      'TanStack Form',
+      'useForm',
+      'form.Field',
+      'form.Subscribe',
+      'array fields',
+      'dynamic fields',
+      'conditional fields',
+      'form state subscriptions',
+      'headless forms',
+      'TypeScript',
+      'Zod',
+    ],
+    problem:
+      'Large forms become harder to maintain when repeated groups, conditional inputs, validation rules, submit state, and previews are all handled with ad hoc local state.',
+    improvement:
+      'The implementation models projects as an array of typed objects, uses TanStack Form array fields for add/remove behavior, subscribes buttons and conditional UI to form state, and keeps Zod as the shared validation contract.',
+    beforeCode: staticEnterpriseBriefBeforeCode,
+    afterCode: tanStackFormScaffoldAfterCode,
+    explanation:
+      'The working example presents a larger enterprise project brief form with contact, repeatable project, technical scope, and preference fields. It uses mode="array", bracketed nested field names, pushValue and removeValue, a conditional accessibility target, form.Subscribe-driven submit/reset state, Zod validation, reset behavior, and a submitted-values preview.',
+    tradeoffs:
+      'TanStack Form has more concepts than plain JSX for a static form, and array field paths require care, but the structure scales better when repeated groups, conditional fields, validation, and submit lifecycle state need to stay coordinated.',
   },
 ]

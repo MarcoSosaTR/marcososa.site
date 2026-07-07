@@ -42,44 +42,52 @@ export function TodoList() {
   }
 
   if (isLoading) {
-    return <p>Loading todos...</p>
+    return (
+      <p className="text-sm text-zinc-600 dark:text-muted">
+        Loading todos...
+      </p>
+    )
   }
   
   if (error) {
-    return <p>Failed to load todos.</p>
+    return (
+      <p className="text-sm font-medium text-rose-700 dark:text-rose-300">
+        Failed to load todos.
+      </p>
+    )
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-muted/20 dark:bg-surface dark:text-foreground dark:shadow-none">
       <div className="flex flex-col">
-        <div className="flex flex-col gap-2 border-b border-zinc-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-2 border-b border-zinc-200 pb-4 dark:border-muted/20 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase text-teal-700">
+            <p className="text-sm font-semibold uppercase text-teal-700 dark:text-accent">
               useEffect fetch example
             </p>
-            <h1 className="mt-1 text-2xl font-bold text-zinc-950">
+            <h1 className="mt-1 text-2xl font-bold text-zinc-950 dark:text-foreground">
               Todo List
             </h1>
           </div>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 dark:text-muted">
             Source: JSONPlaceholder todos
           </p>
         </div>
 
         {isLoading ? (
-          <p className="mt-5 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600">
+          <p className="mt-5 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:border-muted/20 dark:bg-background/70 dark:text-muted">
             Loading todos...
           </p>
         ) : null}
 
         {error ? (
-          <p className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+          <p className="mt-5 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-accent/30 dark:bg-background/70 dark:text-rose-300">
             {error}
           </p>
         ) : null}
 
         {!isLoading && !error && data.length === 0 ? (
-          <p className="mt-5 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600">
+          <p className="mt-5 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:border-muted/20 dark:bg-background/70 dark:text-muted">
             No todos were returned.
           </p>
         ) : null}
@@ -91,19 +99,21 @@ export function TodoList() {
 
               return (
                 <li
-                  className="flex items-center rounded-md bg-zinc-100 p-3"
+                  className="flex items-center rounded-md bg-zinc-100 p-3 dark:bg-background/70"
                   key={todo.id}
                 >
                   <input
                     checked={completed[todo.id] ?? todo.completed}
-                    className="mr-3 h-4 w-4 rounded border-zinc-300 text-teal-700 focus:ring-teal-600"
+                    className="mr-3 h-4 w-4 rounded border-zinc-300 text-teal-700 focus:ring-teal-600 dark:border-muted/50 dark:bg-background dark:text-accent dark:focus:ring-accent/40"
                     id={todoId}
                     onChange={() => toggleTodo(todo.id)}
                     type="checkbox"
                   />
                   <label
-                    className={`flex-1 cursor-pointer text-sm leading-6 text-zinc-800 ${
-                      completed[todo.id] ? 'line-through text-zinc-500' : ''
+                    className={`flex-1 cursor-pointer text-sm leading-6 text-zinc-800 dark:text-foreground ${
+                      completed[todo.id]
+                        ? 'line-through text-zinc-500 dark:text-muted'
+                        : ''
                     }`}
                     htmlFor={todoId}
                   >
