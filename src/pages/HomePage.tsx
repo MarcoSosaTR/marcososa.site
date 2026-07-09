@@ -30,6 +30,47 @@ const sectionLinks = [
   },
 ]
 
+const technicalNoteTechnologies = new Set([
+  'React Hook Form',
+  'TanStack Form',
+  'TanStack Query',
+  'TypeScript',
+  'Zod',
+])
+
+const preferredTechnologyOrder = [
+  'React',
+  'TypeScript',
+  'TanStack Query',
+  'TanStack Form',
+  'React Hook Form',
+  'Zod',
+  'Vite',
+  'Jest',
+  'Testing Library',
+  'Webpack Module Federation',
+  'Cloudflare',
+]
+
+const discoveredPortfolioTechnologies = new Set([
+  ...fullProjects.flatMap((project) => project.techStack),
+  ...caseStudies.flatMap((caseStudy) => caseStudy.technologies),
+  ...technicalNotes.flatMap((note) =>
+    note.concepts.filter((concept) => technicalNoteTechnologies.has(concept)),
+  ),
+])
+
+const portfolioTechnologies = [
+  ...preferredTechnologyOrder.filter((technology) =>
+    discoveredPortfolioTechnologies.has(technology),
+  ),
+  ...Array.from(discoveredPortfolioTechnologies)
+    .filter((technology) => !preferredTechnologyOrder.includes(technology))
+    .sort((firstTechnology, secondTechnology) =>
+      firstTechnology.localeCompare(secondTechnology),
+    ),
+]
+
 export function HomePage() {
   return (
     <>
@@ -61,6 +102,12 @@ export function HomePage() {
                 to="/technical-notes"
               >
                 Review technical notes
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                to="/resume"
+              >
+                Resume storyline
               </Link>
             </div>
           </div>
@@ -107,9 +154,7 @@ export function HomePage() {
             Choose the area you want to review.
           </h2>
           <p className="mt-3 text-base leading-7 text-zinc-600">
-            The main sections now live on separate routes so each category can
-            grow into its own portfolio surface without making the homepage
-            heavy.
+            Explore the portfolio by section. Each area focuses on a different part of my React work, from complete applications to architecture case studies and focused technical notes.
           </p>
         </div>
 
@@ -131,6 +176,30 @@ export function HomePage() {
               </p>
             </Link>
           ))}
+        </div>
+
+        <div className="mt-10 border-t border-zinc-200 pt-8">
+          <div className="grid gap-5 lg:grid-cols-[280px_1fr] lg:items-start">
+            <div>
+              <p className="text-sm font-semibold uppercase text-teal-700">
+                Portfolio stack
+              </p>
+              <h3 className="mt-2 text-2xl font-bold text-zinc-950">
+                Technologies represented across the work.
+              </h3>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {portfolioTechnologies.map((technology) => (
+                <span
+                  className="inline-flex min-h-9 items-center rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm font-semibold text-zinc-700 shadow-sm transition hover:border-teal-300 hover:text-zinc-950"
+                  key={technology}
+                >
+                  {technology}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </>

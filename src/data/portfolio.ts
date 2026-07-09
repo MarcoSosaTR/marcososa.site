@@ -690,7 +690,7 @@ export type PortfolioStatus =
 export const profile = {
   name: 'Marco Sosa',
   initials: 'MS',
-  role: 'Mid / Mid-Senior React Developer',
+  role: 'React Developer',
   focus:
     'Frontend architecture, refactoring, practical TypeScript, and user interfaces that are easy to reason about.',
   photoUrl: profilePhotoUrl,

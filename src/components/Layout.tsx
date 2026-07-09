@@ -5,6 +5,7 @@ const navItems = [
   { to: '/projects', label: 'Projects' },
   { to: '/case-studies', label: 'Case studies' },
   { to: '/technical-notes', label: 'Technical notes' },
+  { to: '/resume', label: 'Resume' },
 ]
 
 function navLinkClass({ isActive }: { isActive: boolean }) {
