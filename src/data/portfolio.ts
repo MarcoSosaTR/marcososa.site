@@ -1,4 +1,5 @@
-import profilePhotoUrl from '../assets/marcososa-image.png'
+import profilePhotoHoverUrl from '../assets/marcososa-image-hover-720.png'
+import profilePhotoUrl from '../assets/marcososa-image-720.png'
 
 const todoUseEffectBeforeCode = `import { useEffect, useState } from 'react'
 
@@ -693,6 +694,7 @@ export const profile = {
   role: 'React Developer',
   focus:
     'Frontend architecture, refactoring, practical TypeScript, and user interfaces that are easy to reason about.',
+  hoverPhotoUrl: profilePhotoHoverUrl,
   photoUrl: profilePhotoUrl,
 }
 

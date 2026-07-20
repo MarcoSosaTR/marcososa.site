@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   caseStudies,
@@ -72,6 +73,15 @@ const portfolioTechnologies = [
 ]
 
 export function HomePage() {
+  useEffect(() => {
+    if (!profile.hoverPhotoUrl) {
+      return
+    }
+
+    const hoverImage = new Image()
+    hoverImage.src = profile.hoverPhotoUrl
+  }, [])
+
   return (
     <>
       <section className="bg-zinc-950 text-white">
@@ -113,13 +123,27 @@ export function HomePage() {
           </div>
 
           <aside className="rounded-lg border border-white/10 bg-white/[0.04] p-5 shadow-sm">
-            <div className="overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
+            <div className="group relative overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
               {profile.photoUrl ? (
-                <img
-                  alt={`${profile.name} profile`}
-                  className="max-h-[560px] w-full object-contain"
-                  src={profile.photoUrl}
-                />
+                <>
+                  <img
+                    alt={`${profile.name} profile`}
+                    className="max-h-[560px] w-full object-contain transition duration-300 group-hover:opacity-0"
+                    decoding="async"
+                    loading="eager"
+                    src={profile.photoUrl}
+                  />
+                  {profile.hoverPhotoUrl ? (
+                    <img
+                      alt=""
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-0 transition duration-300 group-hover:opacity-100"
+                      decoding="async"
+                      loading="eager"
+                      src={profile.hoverPhotoUrl}
+                    />
+                  ) : null}
+                </>
               ) : (
                 <div className="flex aspect-square w-full items-center justify-center bg-zinc-900 text-6xl font-bold text-teal-200">
                   {profile.initials}
